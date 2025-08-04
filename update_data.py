@@ -9,14 +9,14 @@ from datetime import datetime
 
 print("Versão atualizada do script rodando")
 
-# Tenta importar streamlit, caso contrário usa os.environ
+# Tenta importar streamlit e usar secrets; caso falhe, usa os.environ
 try:
     import streamlit as st
     auth = (
         st.secrets["GATEWAY_USERNAME"],
         st.secrets["GATEWAY_PASSWORD"]
     )
-except ModuleNotFoundError:
+except (ModuleNotFoundError, AttributeError, KeyError):
     auth = (
         os.environ.get("GATEWAY_USERNAME"),
         os.environ.get("GATEWAY_PASSWORD")
@@ -149,8 +149,6 @@ def analisar_e_salvar(all_dataframes):
     counts['Max_Data'] = counts['Days_in_Month'] * 24
     counts['Monthly_Attendance_Percentage'] = (counts['Monthly_Data_Count'] / counts['Max_Data']) * 100
     monthy_selecionado = counts[['Month', 'Node_ID', 'Monthly_Attendance_Percentage']].copy()
-
-    # ✅ Converter Period('YYYY-MM') → Timestamp(YYYY-MM-01) para plot correto
     monthy_selecionado['Month'] = pd.to_datetime(monthy_selecionado['Month'].astype(str)).dt.to_period('M').dt.to_timestamp()
 
     df_corr_real = calcular_correlacao_mensal(todos_nos)
