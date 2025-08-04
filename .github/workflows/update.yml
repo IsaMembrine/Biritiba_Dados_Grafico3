@@ -16,6 +16,12 @@ jobs:
       - name: Checkout do repositório
         uses: actions/checkout@v3
 
+      - name: Criar secrets.toml
+        run: |
+          mkdir -p ~/.streamlit
+          echo "GATEWAY_USERNAME = '${{ secrets.GATEWAY_USERNAME }}'" > ~/.streamlit/secrets.toml
+          echo "GATEWAY_PASSWORD = '${{ secrets.GATEWAY_PASSWORD }}'" >> ~/.streamlit/secrets.toml
+
       - name: Configurar Python
         uses: actions/setup-python@v4
         with:
